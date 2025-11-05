@@ -20,6 +20,10 @@ abstract class ExecutorModuleInterface extends Base7579ModuleInterface {
     return _wallet.sendTransaction(_wallet.address, innerCallData);
   }
 
+  /// Retrieves the list of currently installed executor modules on the account.
+  ///
+  /// Uses the `getExecutorsPaginated` view function starting from the sentinel address
+  /// and fetches up to 100 executors. Returns the array of executor addresses.
   Future<List<Address>> getInstalledExecutors() async {
     final result = await _wallet.readContract(
       _wallet.address,
@@ -32,6 +36,10 @@ abstract class ExecutorModuleInterface extends Base7579ModuleInterface {
     return modules;
   }
 
+  /// Returns the address of the executor that precedes this one in the linked list.
+  ///
+  /// If this executor is the first element, returns the sentinel address.
+  /// Throws if this executor is not currently installed.
   Future<Address> prevExecutor() async {
     final executors = await getInstalledExecutors();
     final index = executors.indexOf(address);

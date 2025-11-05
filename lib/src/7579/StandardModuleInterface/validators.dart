@@ -27,6 +27,11 @@ abstract class ValidatorModuleInterface extends Base7579ModuleInterface {
     return modules;
   }
 
+  /// Retrieves the validator that precedes this one in the linked list of installed validators.
+  ///
+  /// Queries the list of installed validators and returns the address of the validator
+  /// immediately before this validator. If this validator is the first in the list,
+  /// returns the sentinel address. Throws if this validator is not found in the list.
   Future<Address> prevValidator() async {
     final validators = await getInstalledValidators();
     final index = validators.indexOf(address);

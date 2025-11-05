@@ -61,6 +61,11 @@ abstract interface class Base7579ModuleInterface {
   /// the module for the smart wallet
   Uint8List getInitData();
 
+  /// Returns the de-initialization data required for uninstalling this module.
+  ///
+  /// The optional [context] parameter allows passing additional data that may
+  /// be needed during module de-initialization. If no context is provided,
+  /// an empty Uint8List is returned.
   Future<Uint8List> getDeInitData([Uint8List? context]) {
     return Future.value(context ?? Uint8List(0));
   }

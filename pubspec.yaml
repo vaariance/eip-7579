@@ -1,9 +1,9 @@
 name: eip7579
 description: "Dart Implementation of EIP-7579 (modular smart accounts by rhinestone.dev) using variance SDK"
-version: 1.0.0
+version: 1.0.1
 homepage: https://variance.space/
-repository: https://github.com/vaariance/eip7579
-issue_tracker: https://github.com/vaariance/eip7579/issues
+repository: https://github.com/vaariance/eip-7579
+issue_tracker: https://github.com/vaariance/eip-7579/issues
 
 environment:
   sdk: ^3.7.0
