@@ -69,3 +69,18 @@ dart run build_runner build
 ```
 
 each deployed module file should be used for encoding function calls to the module.
+
+### Wallet Extensions
+
+Wallet extensions allow you to add custom functionality to the SmartWallet without modifying the core implementation for the purpose of ensuring compatibility with the module you are writing. 
+Extensions can intercept calls, add new methods, or modify behavior.
+
+#### Creating a Wallet Extension
+
+1. Create a new Dart file called `_wallet.ext.dart` in the module directory
+2. Extend the `SmartWallet` base class
+3. Override the `prepareUseroperation` method and `dummySignature`
+4. Implement your custom functionality
+
+Example structure can be found in the `webauthn` validator module
+

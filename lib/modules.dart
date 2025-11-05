@@ -24,5 +24,4 @@ part 'src/7579/modules/validators/OwnableValidator/ownable_validator.dart';
 part 'src/7579/modules/validators/SocialRecovery/social_recovery.dart';
 part 'src/7579/modules/validators/WebauthnValidator/webauthn.dart';
 // ------------ WALLET EXTENSIONS -------------- //
-part 'src/7579/modules/validators/WebauthnValidator/_wallet_extension.dart';
-part 'src/7579/modules/validators/SocialRecovery/_wallet_extension.dart';
+part 'src/7579/modules/validators/WebauthnValidator/_wallet.ext.dart';

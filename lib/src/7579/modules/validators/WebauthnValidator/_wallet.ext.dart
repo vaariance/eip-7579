@@ -1,40 +1,57 @@
 part of '../../../../../modules.dart';
 
-class _WebauthnWalletExtension extends SmartWallet {
-  final Set<PassKeyPair> _keyPairs;
+const int typePrefixLength = 8; // `"type":"`
+const int challengePrefixLength = 13; // `"challenge":"`
 
-  @protected
-  final bool uvRequired;
+class _WebauthnWallet extends SmartWallet {
+  final List<PassKeyPair> _keyPairs;
 
-  factory _WebauthnWalletExtension.fromWallet(
+  final bool _uvRequired;
+
+  /// Creates a new [_WebauthnWallet] from an existing [SmartWallet] instance.
+  ///
+  /// If [wallet] is already a [_WebauthnWallet], it is returned as-is.
+  /// Otherwise, a new instance is created with the provided [keyPairs],
+  /// optional [signer], and user-verification requirement flag [uvRequired].
+  /// If [signer] is provided, the wallet will replace the default internal signer with the provided one.
+  factory _WebauthnWallet.fromWallet(
     SmartWallet wallet,
-    Set<PassKeyPair> keyPairs, [
+    List<PassKeyPair> keyPairs, [
     PassKeySigner? signer,
     bool uvRequired = true,
   ]) {
-    if (wallet is _WebauthnWalletExtension) {
+    if (wallet is _WebauthnWallet) {
       return wallet;
     }
 
-    return _WebauthnWalletExtension.internal(
+    return _WebauthnWallet.internal(
       wallet.state.copyWith(signer: signer),
       keyPairs,
       uvRequired,
     );
   }
 
-  _WebauthnWalletExtension.internal(
-    super._state,
-    this._keyPairs,
-    this.uvRequired,
-  ) : assert(
+  _WebauthnWallet.internal(super._state, this._keyPairs, this._uvRequired)
+    : assert(
         _state.signer is PassKeySigner,
-        "[WebauthnValidator]: SmartWallet signer must be an instance of PasskeySigner",
+        "[WebauthnValidator]: SmartWallet signer must be an instance of [PassKeySigner]",
       );
 
   @override
   String get dummySignature => _getDummySignature();
 
+  /// Encodes the provided credential IDs and PassKey signatures into a single ABI-encoded blob.
+  ///
+  /// The resulting bytes are structured as:
+  /// - `bytes32[]` - list of credential IDs (keccak256 hashes)
+  /// - `bool`      - `usePrecompile` flag, always set to `true`
+  /// - `tuple[]`   - array of signature tuples, each containing:
+  ///   - `bytes`   - authenticator data
+  ///   - `string`  - client data JSON
+  ///   - `uint256` - adjusted challenge position (`challengePos - challengePrefixLength`)
+  ///   - `uint256` - adjusted type position (`typePos - typePrefixLength`)
+  ///   - `uint256` - signature r-value
+  ///   - `uint256` - signature s-value
   Uint8List encodeSignatures(List<Uint8List> ids, List<PassKeySignature> sigs) {
     return abi.encode(
       ["bytes32[]", "bool", "(bytes,string,uint256,uint256,uint256,uint256)[]"],
@@ -46,8 +63,8 @@ class _WebauthnWalletExtension extends SmartWallet {
             (sig) => [
               sig.authData,
               sig.clientDataJSON,
-              BigInt.from(sig.challengePos - 13), // `"challenge":"`
-              BigInt.from(sig.typePos - 8), // `"type":"`
+              BigInt.from(sig.challengePos - challengePrefixLength),
+              BigInt.from(sig.typePos - typePrefixLength),
               sig.signature.$1.value,
               sig.signature.$2.value,
             ],
@@ -95,6 +112,17 @@ class _WebauthnWalletExtension extends SmartWallet {
     return hexlify(webauthnSignature);
   }
 
+  @override
+  Future<UserOperation> prepareUserOperation(
+    UserOperation op, {
+    Uint256? nonceKey,
+  }) {
+    final validatorNonceKey = Uint256.fromList(
+      WebauthnValidator.getAddress().value.padToNBytes(24, direction: "right"),
+    );
+    return super.prepareUserOperation(op, nonceKey: validatorNonceKey);
+  }
+
   Uint8List _getCredentialId(PassKeyPair keypair) {
     return keccak256(
       abi.encode(
@@ -102,7 +130,7 @@ class _WebauthnWalletExtension extends SmartWallet {
         [
           keypair.authData.publicKey.$1.value,
           keypair.authData.publicKey.$2.value,
-          uvRequired,
+          _uvRequired,
           address,
         ],
       ),
@@ -110,7 +138,7 @@ class _WebauthnWalletExtension extends SmartWallet {
   }
 
   String _getDummySignature() {
-    final uv = uvRequired ? 0x04 : 0x01;
+    final uv = _uvRequired ? 0x04 : 0x01;
     final challenge = "p5aV2uHXr0AOqUk7HQitvi-Ny1p5aV2uHXr0AOqUk7H";
     final dummyCdField =
         '{"type":"webauthn.get","challenge":$challenge,"origin":"https://variance.space"}';
@@ -132,16 +160,5 @@ class _WebauthnWalletExtension extends SmartWallet {
 
     final webauthnSignature = encodeSignatures([credId], [sig]);
     return hexlify(webauthnSignature);
-  }
-
-  @override
-  Future<UserOperation> prepareUserOperation(
-    UserOperation op, {
-    Uint256? nonceKey,
-  }) {
-    final validatorNonceKey = Uint256.fromList(
-      WebauthnValidator.getAddress().value.padToNBytes(24, direction: "right"),
-    );
-    return super.prepareUserOperation(op, nonceKey: validatorNonceKey);
   }
 }

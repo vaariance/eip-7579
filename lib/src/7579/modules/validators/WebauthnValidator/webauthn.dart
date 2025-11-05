@@ -5,24 +5,45 @@ class WebauthnValidator extends ValidatorModuleInterface {
 
   final BigInt _initThreshold;
 
-  final Set<PassKeyPair> _keyPairs;
+  final List<PassKeyPair> _keyPairs;
 
+  final bool _requireUserVerification;
+
+  /// Creates a WebAuthn validator module for a smart wallet.
+  ///
+  /// [wallet] - The smart wallet this validator is attached to.
+  /// [_initThreshold] - The initial signature threshold (must equal the number of provided key pairs).
+  /// [_requireUserVerification] - Whether user verification is required for credentials.
+  /// [_keyPairs] - Set of passkey pairs to be registered as valid credentials.
+  /// [signer] - Optional custom signer for passkey operations; if omitted, a default is derived from the attached wallet.
+  ///
+  /// Throws [AssertionError] if the threshold does not match the number of key pairs.
+  /// example
+  /// ```dart
+  /// final validator = WebauthnValidator(
+  ///   wallet,
+  ///   BigInt.from(1),
+  ///   true,
+  ///   {keyPair1, keyPair2},
+  /// );
+  /// ```
   WebauthnValidator(
     SmartWallet wallet,
     this._initThreshold,
-    this._keyPairs, {
+    this._requireUserVerification,
+    this._keyPairs, [
     PassKeySigner? signer,
-    bool uvRequired = true,
-  }) : assert(
-         _initThreshold.toInt() == _keyPairs.length,
+  ]) : assert(
+         1 <= _initThreshold.toInt() &&
+             _initThreshold.toInt() <= _keyPairs.length,
          ModuleVariableError('WebAuthnValidator', 'threshold'),
        ),
        super(
-         _WebauthnWalletExtension.fromWallet(
+         _WebauthnWallet.fromWallet(
            wallet,
            _keyPairs,
            signer,
-           uvRequired,
+           _requireUserVerification,
          ),
        );
 
@@ -44,8 +65,6 @@ class WebauthnValidator extends ValidatorModuleInterface {
   @override
   String get version => "1.0.0";
 
-  bool get _uvRequired => (contract as _WebauthnWalletExtension).uvRequired;
-
   ///////////////////////////////////////////////////////////////
   //            READS
   ///////////////////////////////////////////////////////////////
@@ -65,7 +84,7 @@ class WebauthnValidator extends ValidatorModuleInterface {
       params: [
         keypair.authData.publicKey.$1.value,
         keypair.authData.publicKey.$2.value,
-        _uvRequired,
+        _requireUserVerification,
         account ?? contract.address,
       ],
     );
@@ -113,7 +132,7 @@ class WebauthnValidator extends ValidatorModuleInterface {
       params: [
         keypair.authData.publicKey.$1.value,
         keypair.authData.publicKey.$2.value,
-        _uvRequired,
+        _requireUserVerification,
         account ?? contract.address,
       ],
     );
@@ -155,9 +174,13 @@ class WebauthnValidator extends ValidatorModuleInterface {
         .encodeCall([
           keypair.authData.publicKey.$1.value,
           keypair.authData.publicKey.$2.value,
-          _uvRequired,
+          _requireUserVerification,
         ]);
-    final tx = await (sc ?? contract).sendTransaction(address, calldata);
+    final tx = await (sc ?? contract).sendTransaction(
+      address,
+      calldata,
+      nonceKey: validatorNonceKey,
+    );
     final receipt = await tx.wait();
     return receipt;
   }
@@ -171,9 +194,13 @@ class WebauthnValidator extends ValidatorModuleInterface {
         .encodeCall([
           keypair.authData.publicKey.$1.value,
           keypair.authData.publicKey.$2.value,
-          _uvRequired,
+          _requireUserVerification,
         ]);
-    final tx = await (sc ?? contract).sendTransaction(address, calldata);
+    final tx = await (sc ?? contract).sendTransaction(
+      address,
+      calldata,
+      nonceKey: validatorNonceKey,
+    );
     final receipt = await tx.wait();
     return receipt;
   }
@@ -185,7 +212,11 @@ class WebauthnValidator extends ValidatorModuleInterface {
     final calldata = _deployedModule.contract
         .function('setThreshold')
         .encodeCall([BigInt.from(threshold)]);
-    final tx = await (sc ?? contract).sendTransaction(address, calldata);
+    final tx = await (sc ?? contract).sendTransaction(
+      address,
+      calldata,
+      nonceKey: validatorNonceKey,
+    );
     final receipt = await tx.wait();
     return receipt;
   }
@@ -196,10 +227,11 @@ class WebauthnValidator extends ValidatorModuleInterface {
     List<Uint8List> calls, {
     List<BigInt>? amountsInWei,
   }) {
-    return (contract as _WebauthnWalletExtension).sendBatchedTransaction(
+    return contract.sendBatchedTransaction(
       recipients,
       calls,
       amountsInWei: amountsInWei,
+      nonceKey: validatorNonceKey,
     );
   }
 
@@ -212,7 +244,7 @@ class WebauthnValidator extends ValidatorModuleInterface {
 
   static Uint8List parseInitData(
     BigInt threshold,
-    Set<PassKeyPair> credentials, [
+    List<PassKeyPair> credentials, [
     bool? uvRequired = true,
   ]) {
     return abi.encode(

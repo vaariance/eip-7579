@@ -94,7 +94,7 @@ class OwnableValidator extends ValidatorModuleInterface {
   ///////////////////////////////////////////////////////////////
   Future<UserOperationReceipt?> addOwner(
     Address owner, [
-    SmartContract? service,
+    SmartContract? sc,
   ]) async {
     final owners = await getOwners() ?? [];
     final currentOwnerIndex = owners.indexOf(owner);
@@ -106,14 +106,18 @@ class OwnableValidator extends ValidatorModuleInterface {
     final calldata = _deployedModule.contract.function('addOwner').encodeCall([
       owner,
     ]);
-    final tx = await (service ?? contract).sendTransaction(address, calldata);
+    final tx = await (sc ?? contract).sendTransaction(
+      address,
+      calldata,
+      nonceKey: validatorNonceKey,
+    );
     final receipt = await tx.wait();
     return receipt;
   }
 
   Future<UserOperationReceipt?> removeOwner(
     Address owner, [
-    SmartContract? service,
+    SmartContract? sc,
   ]) async {
     final owners = await getOwners() ?? [];
     final currentOwnerIndex = owners.indexOf(owner);
@@ -129,19 +133,27 @@ class OwnableValidator extends ValidatorModuleInterface {
     final calldata = _deployedModule.contract
         .function('removeOwner')
         .encodeCall([prevOwner, owner]);
-    final tx = await (service ?? contract).sendTransaction(address, calldata);
+    final tx = await (sc ?? contract).sendTransaction(
+      address,
+      calldata,
+      nonceKey: validatorNonceKey,
+    );
     final receipt = await tx.wait();
     return receipt;
   }
 
   Future<UserOperationReceipt?> setThreshold(
     int threshold, [
-    SmartContract? service,
+    SmartContract? sc,
   ]) async {
     final calldata = _deployedModule.contract
         .function('setThreshold')
         .encodeCall([BigInt.from(threshold)]);
-    final tx = await (service ?? contract).sendTransaction(address, calldata);
+    final tx = await (sc ?? contract).sendTransaction(
+      address,
+      calldata,
+      nonceKey: validatorNonceKey,
+    );
     final receipt = await tx.wait();
     return receipt;
   }
@@ -152,10 +164,11 @@ class OwnableValidator extends ValidatorModuleInterface {
     List<Uint8List> calls, {
     List<BigInt>? amountsInWei,
   }) {
-    return (contract as SmartWallet).sendBatchedTransaction(
+    return contract.sendBatchedTransaction(
       recipients,
       calls,
       amountsInWei: amountsInWei,
+      nonceKey: validatorNonceKey,
     );
   }
 

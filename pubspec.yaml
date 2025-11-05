@@ -15,8 +15,6 @@ platforms:
   web:
 
 dependencies:
-  flutter:
-    sdk: flutter
   variance_dart: 
     path: ../variance-dart
   web3_signers: ^0.2.1
