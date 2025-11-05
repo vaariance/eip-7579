@@ -1,4 +1,4 @@
-part of '../../../../../modules.dart';
+part of '../../../../../eip7579.dart';
 
 class RegistryHook extends HookModuleInterface {
   static final _deployedModule = RegistryHookContract(getAddress());

@@ -1,4 +1,4 @@
-part of '../../../../../modules.dart';
+part of '../../../../../eip7579.dart';
 
 typedef RecoveryData = Uint8List;
 

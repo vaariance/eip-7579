@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-part of '../../../../../modules.dart';
+part of '../../../../../eip7579.dart';
 
 class OwnableExecutor extends ExecutorModuleInterface {
   static final _deployedModule = OwnableExecutorContract(getAddress());

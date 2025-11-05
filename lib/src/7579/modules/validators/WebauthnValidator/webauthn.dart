@@ -1,4 +1,4 @@
-part of '../../../../../modules.dart';
+part of '../../../../../eip7579.dart';
 
 class WebauthnValidator extends ValidatorModuleInterface {
   static final _deployedModule = WebauthnContract(getAddress());

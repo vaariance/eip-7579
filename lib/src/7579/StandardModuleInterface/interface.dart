@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
+
 import 'package:variance_dart/variance_dart.dart';
 import 'package:web3_signers/web3_signers.dart';
 import 'package:web3dart/web3dart.dart';
@@ -13,7 +14,6 @@ abstract interface class Base7579ModuleInterface {
   Base7579ModuleInterface(this._wallet);
 
   // returns an interface with only contract related functions
-  @protected
   SmartContract get contract => _wallet;
 
   // Module Name as defined in contract metadata

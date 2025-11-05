@@ -1,4 +1,4 @@
-part of '../../../../../modules.dart';
+part of '../../../../../eip7579.dart';
 
 const int typePrefixLength = 8; // `"type":"`
 const int challengePrefixLength = 13; // `"challenge":"`
