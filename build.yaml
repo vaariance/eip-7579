@@ -1,6 +1,6 @@
 builders:
   abi_json_builder:
-    import: "package:variance_modules/src/builder.dart"
+    import: "./builder.dart"
     builder_factories: ["abiJsonBuilder"]
     build_extensions: { ".abi.json": [".m.dart"] }
     auto_apply: root_package
