@@ -9,6 +9,7 @@ import 'package:web3dart/web3dart.dart';
 
 import 'src/7579/StandardModuleInterface/interface.dart';
 import 'src/7579/modules/executors/OwnableExecutor/ownable_executor.m.dart';
+import 'src/7579/modules/executors/ScheduledTransfers/scheduled_transfers.m.dart';
 import 'src/7579/modules/hooks/RegistryHook/registry_hook.m.dart';
 import 'src/7579/modules/validators/OwnableValidator/ownable_validator.m.dart';
 import 'src/7579/modules/validators/SocialRecovery/social_recovery.m.dart';
@@ -18,6 +19,7 @@ export 'src/7579/StandardModuleInterface/interface.dart';
 
 // ------------ EXECUTORS -------------- //
 part 'src/7579/modules/executors/OwnableExecutor/ownable_executor.dart';
+part 'src/7579/modules/executors/ScheduledTransfers/scheduled_transfers.dart';
 // ------------ HOOKS -------------- //
 part 'src/7579/modules/hooks/RegistryHook/registry_hook.dart';
 // ------------ VALIDATORS -------------- //

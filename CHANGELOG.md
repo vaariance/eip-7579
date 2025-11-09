@@ -1,3 +1,6 @@
+## 1.1.0
+* Add ScheduledTransfers executor module
+
 ## 1.0.2
 
 * Replace SENTINEL_ADDRESS constant with Addresses.sentinelAddress
