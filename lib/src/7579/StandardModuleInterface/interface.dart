@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:eip7579/src/7579/utils.dart' show extractPrevAddress;
 import 'package:variance_dart/variance_dart.dart';
 import 'package:web3_signers/web3_signers.dart';
 import 'package:web3dart/web3dart.dart';

@@ -8,18 +8,6 @@ abstract class ExecutorModuleInterface extends Base7579ModuleInterface {
     "getExecutorsPaginated",
   );
 
-  // calls the executor module to execute a function call on the account
-  // entrypoint => account (execute) -> module (execute) -> adapter (executeFromExecutor) ->
-  Future<UserOperationResponse> execute(Uint8List encodedFunctionCall) {
-    final innerCallData = ContractUtils.encodeFunctionCall(
-      'execute',
-      address,
-      Safe7579Abis.get('iModule'),
-      [encodedFunctionCall],
-    );
-    return _wallet.sendTransaction(_wallet.address, innerCallData);
-  }
-
   /// Retrieves the list of currently installed executor modules on the account.
   ///
   /// Uses the `getExecutorsPaginated` view function starting from the sentinel address
@@ -36,25 +24,11 @@ abstract class ExecutorModuleInterface extends Base7579ModuleInterface {
     return modules;
   }
 
-  /// Returns the address of the executor that precedes this one in the linked list.
-  ///
-  /// If this executor is the first element, returns the sentinel address.
-  /// Throws if this executor is not currently installed.
-  Future<Address> prevExecutor() async {
-    final executors = await getInstalledExecutors();
-    final index = executors.indexOf(address);
-    if (index == 0) {
-      return Addresses.sentinelAddress;
-    } else if (index > 0) {
-      return executors[index - 1];
-    } else {
-      throw Exception('Executor not found');
-    }
-  }
-
   @override
   Future<Uint8List> getDeInitData([Uint8List? context]) async {
-    final prev = await prevExecutor();
+    final executors = await getInstalledExecutors();
+    final index = executors.indexOf(address);
+    final prev = extractPrevAddress(index, executors);
     return abi.encode(["address", "bytes"], [prev, context ?? Uint8List(0)]);
   }
 }

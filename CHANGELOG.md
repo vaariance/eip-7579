@@ -1,5 +1,14 @@
+## 1.2.0
+
+* Add new ScheduledOrders executor module with ABI, contract class and implementation
+* Add new AutoSavings executor module with ABI, contract class and implementation
+* Create utils file with common helper functions
+* Refactor address extraction logic into shared utility function
+* Move dateTimeToInt to utils and update references
+
 ## 1.1.0
-* Add ScheduledTransfers executor module
+
+* Add ScheduledTransfers executor module with ABI, contract class and implementation
 
 ## 1.0.2
 
