@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:variance_dart/variance_dart.dart' show Addresses;
 import 'package:web3_signers/web3_signers.dart';
 import 'package:web3dart/web3dart.dart';
@@ -49,8 +51,8 @@ Address extractPrevAddress(int addressIndex, List<Address> allAddresses) {
 }
 
 extension DoubleExt on double {
-  toBigInt() => BigInt.from(this);
-  toBytes(int? bytes) {
+  BigInt toBigInt() => BigInt.from(this);
+  Uint8List toBytes(int? bytes) {
     final value = intToBytes(toBigInt());
     return value.padToNBytes(bytes ?? value.length);
   }

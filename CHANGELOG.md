@@ -1,3 +1,8 @@
+## 1.3.0
+
+* Fix return type annotations in DoubleExt extension methods
+* Add new HookMultiPlexer hook module with ABI, contract class and implementation
+
 ## 1.2.0
 
 * Add new ScheduledOrders executor module with ABI, contract class and implementation

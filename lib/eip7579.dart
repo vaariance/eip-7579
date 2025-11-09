@@ -14,6 +14,7 @@ import 'src/7579/modules/executors/ScheduledTransfers/scheduled_transfers.m.dart
 import 'src/7579/modules/executors/ScheduledOrders/scheduled_orders.m.dart';
 import 'src/7579/modules/executors/AutoSavings/auto_savings.m.dart';
 import 'src/7579/modules/hooks/RegistryHook/registry_hook.m.dart';
+import 'src/7579/modules/hooks/HookMultiPlexer/hook_multi_plexer.m.dart';
 import 'src/7579/modules/validators/OwnableValidator/ownable_validator.m.dart';
 import 'src/7579/modules/validators/SocialRecovery/social_recovery.m.dart';
 import 'src/7579/modules/validators/WebauthnValidator/webauthn.m.dart';
@@ -27,6 +28,7 @@ part 'src/7579/modules/executors/ScheduledOrders/scheduled_orders.dart';
 part 'src/7579/modules/executors/AutoSavings/auto_savings.dart';
 // ------------ HOOKS -------------- //
 part 'src/7579/modules/hooks/RegistryHook/registry_hook.dart';
+part 'src/7579/modules/hooks/HookMultiPlexer/hook_multi_plexer.dart';
 // ------------ VALIDATORS -------------- //
 part 'src/7579/modules/validators/OwnableValidator/ownable_validator.dart';
 part 'src/7579/modules/validators/SocialRecovery/social_recovery.dart';
