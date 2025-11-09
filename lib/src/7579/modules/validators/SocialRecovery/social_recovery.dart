@@ -108,17 +108,12 @@ class SocialRecovery extends ValidatorModuleInterface {
     final guardians = await getGuardians() ?? [];
     final currentGuardianIndex = guardians.indexOf(guardian);
 
-    Address prevGuardian;
-    if (currentGuardianIndex == -1) {
-      throw Exception('Guardian not found');
-    } else if (currentGuardianIndex == 0) {
-      prevGuardian = Addresses.sentinelAddress;
-    } else {
-      prevGuardian = guardians[currentGuardianIndex - 1];
-    }
     final calldata = _deployedModule.contract
         .function('removeGuardian')
-        .encodeCall([prevGuardian, guardian]);
+        .encodeCall([
+          extractPrevAddress(currentGuardianIndex, guardians),
+          guardian,
+        ]);
     final tx = await (sc ?? contract).sendTransaction(
       address,
       calldata,

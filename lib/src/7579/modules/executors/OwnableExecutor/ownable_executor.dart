@@ -68,20 +68,12 @@ class OwnableExecutor extends ExecutorModuleInterface {
   }
 
   Future<UserOperationReceipt?> removeOwner(Address owner) async {
-    final oowners = await getOwners() ?? [];
-    final currentOwnerIndex = oowners.indexOf(owner);
+    final owners = await getOwners() ?? [];
+    final currentOwnerIndex = owners.indexOf(owner);
 
-    Address prevOwner;
-    if (currentOwnerIndex == -1) {
-      throw Exception('Owner not found');
-    } else if (currentOwnerIndex == 0) {
-      prevOwner = Addresses.sentinelAddress;
-    } else {
-      prevOwner = oowners[currentOwnerIndex - 1];
-    }
     final calldata = _deployedModule.contract
         .function('removeOwner')
-        .encodeCall([prevOwner, owner]);
+        .encodeCall([extractPrevAddress(currentOwnerIndex, owners), owner]);
     final tx = await contract.sendTransaction(address, calldata);
     final receipt = await tx.wait();
     return receipt;

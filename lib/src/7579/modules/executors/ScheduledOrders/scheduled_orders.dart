@@ -1,26 +1,36 @@
 part of '../../../../../eip7579.dart';
 
-class Schedule {
-  final DateTime startDate;
-  final BigInt repeatEvery;
-  final BigInt numberOfRepeats;
+enum OrderType { buy, sell }
 
-  Schedule({
-    required this.startDate,
-    required this.repeatEvery,
-    required this.numberOfRepeats,
+class Order {
+  final Address buyToken;
+  final Address sellToken;
+  final BigInt amount;
+  final OrderType orderType;
+  final String? priceLimit;
+  final String? expirationDate;
+
+  Order({
+    required this.buyToken,
+    required this.sellToken,
+    required this.amount,
+    required this.orderType,
+    this.priceLimit,
+    this.expirationDate,
   });
 }
 
-class ScheduledTransfers extends ExecutorModuleInterface {
-  static final _deployedModule = ScheduledTransfersContract(getAddress());
+typedef RecurringOrder = ({Order order, Schedule schedule});
+
+class ScheduledOrders extends ExecutorModuleInterface {
+  static final _deployedModule = ScheduledOrdersContract(getAddress());
 
   final BigInt _executeInterval;
   final BigInt _numberOfExecutions;
   final DateTime _startDate;
   final Uint8List _executionData;
 
-  ScheduledTransfers(
+  ScheduledOrders(
     super.wallet,
     this._executeInterval,
     this._numberOfExecutions,
@@ -38,7 +48,7 @@ class ScheduledTransfers extends ExecutorModuleInterface {
   Uint8List get initData => getInitData();
 
   @override
-  String get name => 'ScheduledTransfers';
+  String get name => 'ScheduledOrders';
 
   @override
   ModuleType get type => ModuleType.executor;
@@ -52,8 +62,8 @@ class ScheduledTransfers extends ExecutorModuleInterface {
 
   @override
   Uint8List getInitData() {
-    return intToBytes(_executeInterval)
-        .padToNBytes(6)
+    return getSwapRouterAddress((contract as SmartWallet).chain.chainId).value
+        .concat(intToBytes(_executeInterval).padToNBytes(6))
         .concat(intToBytes(_numberOfExecutions).padToNBytes(2))
         .concat(intToBytes(dateTimeToInt(_startDate)).padToNBytes(6))
         .concat(_executionData);
@@ -63,39 +73,31 @@ class ScheduledTransfers extends ExecutorModuleInterface {
   //            WRITES
   ///////////////////////////////////////////////////////////////
 
-  Future<UserOperationReceipt?> toggleOrder(BigInt jobId) async {
-    final calldata = _deployedModule.contract
-        .function('toggleOrder')
-        .encodeCall([jobId]);
-    final tx = await contract.sendTransaction(address, calldata);
-    final receipt = await tx.wait();
-    return receipt;
-  }
-
   Future<UserOperationReceipt?> executeOrder(BigInt jobId) async {
+    final swapDetails = defaultSwapDetails();
     final calldata = _deployedModule.contract
         .function('executeOrder')
-        .encodeCall([jobId]);
+        .encodeCall([
+          jobId,
+          swapDetails["sqrtPriceLimitX96"],
+          swapDetails["amountOutMin"],
+          swapDetails["fee"],
+        ]);
     final tx = await contract.sendTransaction(address, calldata);
     final receipt = await tx.wait();
     return receipt;
   }
 
-  Future<UserOperationReceipt?> addOrder(
-    Schedule schedule,
-    BigInt amount,
-    Address recipient, [
-    Address? token,
-  ]) async {
-    final transferdata = abi.encode(
+  Future<UserOperationReceipt?> addOrder(RecurringOrder order) async {
+    final swapOrderData = abi.encode(
       ["address", "address", "uint256"],
-      [recipient, token ?? Addresses.zeroAddress, amount],
+      [order.order.buyToken, order.order.sellToken, order.order.amount],
     );
     final calldata = _deployedModule.contract.function('addOrder').encodeCall([
-      intToBytes(schedule.repeatEvery).padToNBytes(6),
-      intToBytes(schedule.numberOfRepeats).padToNBytes(2),
-      intToBytes(dateTimeToInt(schedule.startDate)).padToNBytes(6),
-      transferdata,
+      intToBytes(order.schedule.repeatEvery).padToNBytes(6),
+      intToBytes(order.schedule.numberOfRepeats).padToNBytes(2),
+      intToBytes(dateTimeToInt(order.schedule.startDate)).padToNBytes(6),
+      swapOrderData,
     ]);
     final tx = await contract.sendTransaction(address, calldata);
     final receipt = await tx.wait();
@@ -106,6 +108,6 @@ class ScheduledTransfers extends ExecutorModuleInterface {
   //            STATIC METHODS
   ///////////////////////////////////////////////////////////////
   static Address getAddress() {
-    return Address.fromHex('0xA8E374779aeE60413c974b484d6509c7E4DDb6bA');
+    return Address.fromHex('0x40dc90D670C89F322fa8b9f685770296428DCb6b');
   }
 }

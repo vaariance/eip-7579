@@ -4,12 +4,15 @@ import 'dart:typed_data';
 
 import 'package:variance_dart/variance_dart.dart';
 import 'package:eip7579/src/7579/errors.dart';
+import 'package:eip7579/src/7579/utils.dart';
 import 'package:web3_signers/web3_signers.dart';
 import 'package:web3dart/web3dart.dart';
 
 import 'src/7579/StandardModuleInterface/interface.dart';
 import 'src/7579/modules/executors/OwnableExecutor/ownable_executor.m.dart';
 import 'src/7579/modules/executors/ScheduledTransfers/scheduled_transfers.m.dart';
+import 'src/7579/modules/executors/ScheduledOrders/scheduled_orders.m.dart';
+import 'src/7579/modules/executors/AutoSavings/auto_savings.m.dart';
 import 'src/7579/modules/hooks/RegistryHook/registry_hook.m.dart';
 import 'src/7579/modules/validators/OwnableValidator/ownable_validator.m.dart';
 import 'src/7579/modules/validators/SocialRecovery/social_recovery.m.dart';
@@ -20,6 +23,8 @@ export 'src/7579/StandardModuleInterface/interface.dart';
 // ------------ EXECUTORS -------------- //
 part 'src/7579/modules/executors/OwnableExecutor/ownable_executor.dart';
 part 'src/7579/modules/executors/ScheduledTransfers/scheduled_transfers.dart';
+part 'src/7579/modules/executors/ScheduledOrders/scheduled_orders.dart';
+part 'src/7579/modules/executors/AutoSavings/auto_savings.dart';
 // ------------ HOOKS -------------- //
 part 'src/7579/modules/hooks/RegistryHook/registry_hook.dart';
 // ------------ VALIDATORS -------------- //

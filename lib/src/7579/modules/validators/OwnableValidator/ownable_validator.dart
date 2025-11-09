@@ -122,17 +122,9 @@ class OwnableValidator extends ValidatorModuleInterface {
     final owners = await getOwners() ?? [];
     final currentOwnerIndex = owners.indexOf(owner);
 
-    Address prevOwner;
-    if (currentOwnerIndex == -1) {
-      throw Exception('Owner not found');
-    } else if (currentOwnerIndex == 0) {
-      prevOwner = Addresses.sentinelAddress;
-    } else {
-      prevOwner = owners[currentOwnerIndex - 1];
-    }
     final calldata = _deployedModule.contract
         .function('removeOwner')
-        .encodeCall([prevOwner, owner]);
+        .encodeCall([extractPrevAddress(currentOwnerIndex, owners), owner]);
     final tx = await (sc ?? contract).sendTransaction(
       address,
       calldata,
