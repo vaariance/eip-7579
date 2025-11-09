@@ -1,3 +1,7 @@
+## 1.0.2
+
+* Replace SENTINEL_ADDRESS constant with Addresses.sentinelAddress
+
 ## 1.0.1
 
 * Add detailed docstrings for module interface methods

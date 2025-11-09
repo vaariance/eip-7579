@@ -112,7 +112,7 @@ class SocialRecovery extends ValidatorModuleInterface {
     if (currentGuardianIndex == -1) {
       throw Exception('Guardian not found');
     } else if (currentGuardianIndex == 0) {
-      prevGuardian = SENTINEL_ADDRESS;
+      prevGuardian = Addresses.sentinelAddress;
     } else {
       prevGuardian = guardians[currentGuardianIndex - 1];
     }

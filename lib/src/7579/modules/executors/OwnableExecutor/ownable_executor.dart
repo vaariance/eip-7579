@@ -75,7 +75,7 @@ class OwnableExecutor extends ExecutorModuleInterface {
     if (currentOwnerIndex == -1) {
       throw Exception('Owner not found');
     } else if (currentOwnerIndex == 0) {
-      prevOwner = SENTINEL_ADDRESS;
+      prevOwner = Addresses.sentinelAddress;
     } else {
       prevOwner = oowners[currentOwnerIndex - 1];
     }

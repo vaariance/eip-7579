@@ -29,7 +29,7 @@ abstract class ExecutorModuleInterface extends Base7579ModuleInterface {
       _wallet.address,
       _abi,
       _abi.name,
-      params: [SENTINEL_ADDRESS, BigInt.from(100)],
+      params: [Addresses.sentinelAddress, BigInt.from(100)],
       sender: _wallet.address,
     );
     final modules = List<Address>.from(result.first);
@@ -44,7 +44,7 @@ abstract class ExecutorModuleInterface extends Base7579ModuleInterface {
     final executors = await getInstalledExecutors();
     final index = executors.indexOf(address);
     if (index == 0) {
-      return SENTINEL_ADDRESS;
+      return Addresses.sentinelAddress;
     } else if (index > 0) {
       return executors[index - 1];
     } else {
