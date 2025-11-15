@@ -1,0 +1,31 @@
+name: Publish to pub.dev on Tag
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    name: Publish package
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.release.tag_name, 'v')
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout the tagged release
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Publish to pub.dev
+        run: dart pub publish --force

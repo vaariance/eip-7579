@@ -54,8 +54,8 @@ class ScheduledTransfers extends ExecutorModuleInterface {
   Uint8List getInitData() {
     return intToBytes(_executeInterval)
         .padToNBytes(6)
-        .concat(intToBytes(_numberOfExecutions).padToNBytes(2))
-        .concat(intToBytes(dateTimeToInt(_startDate)).padToNBytes(6))
+        .concat(_numberOfExecutions.toBytes(2))
+        .concat(dateTimeToInt(_startDate).toBytes(6))
         .concat(_executionData);
   }
 
@@ -92,9 +92,9 @@ class ScheduledTransfers extends ExecutorModuleInterface {
       [recipient, token ?? Addresses.zeroAddress, amount],
     );
     final calldata = _deployedModule.contract.function('addOrder').encodeCall([
-      intToBytes(schedule.repeatEvery).padToNBytes(6),
-      intToBytes(schedule.numberOfRepeats).padToNBytes(2),
-      intToBytes(dateTimeToInt(schedule.startDate)).padToNBytes(6),
+      schedule.repeatEvery.toBytes(6),
+      schedule.numberOfRepeats.toBytes(2),
+      dateTimeToInt(schedule.startDate).toBytes(6),
       transferdata,
     ]);
     final tx = await contract.sendTransaction(address, calldata);

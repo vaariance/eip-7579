@@ -1,3 +1,9 @@
+## 1.4.0
+
+* Add MultiFactor validator module and test suite
+* Move extensions to separate file and update utils
+* Add test coverage for modules and interfaces
+
 ## 1.3.0
 
 * Fix return type annotations in DoubleExt extension methods

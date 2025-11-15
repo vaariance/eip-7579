@@ -1,8 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:variance_dart/variance_dart.dart' show Addresses;
 import 'package:web3_signers/web3_signers.dart';
-import 'package:web3dart/web3dart.dart';
 
 BigInt dateTimeToInt(DateTime time) {
   return BigInt.from(time.millisecondsSinceEpoch);
@@ -48,12 +45,4 @@ Address extractPrevAddress(int addressIndex, List<Address> allAddresses) {
     prevAddress = allAddresses[addressIndex - 1];
   }
   return prevAddress;
-}
-
-extension DoubleExt on double {
-  BigInt toBigInt() => BigInt.from(this);
-  Uint8List toBytes(int? bytes) {
-    final value = intToBytes(toBigInt());
-    return value.padToNBytes(bytes ?? value.length);
-  }
 }

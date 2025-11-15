@@ -63,9 +63,9 @@ class ScheduledOrders extends ExecutorModuleInterface {
   @override
   Uint8List getInitData() {
     return getSwapRouterAddress((contract as SmartWallet).chain.chainId).value
-        .concat(intToBytes(_executeInterval).padToNBytes(6))
-        .concat(intToBytes(_numberOfExecutions).padToNBytes(2))
-        .concat(intToBytes(dateTimeToInt(_startDate)).padToNBytes(6))
+        .concat(_executeInterval.toBytes(6))
+        .concat(_numberOfExecutions.toBytes(2))
+        .concat(dateTimeToInt(_startDate).toBytes(6))
         .concat(_executionData);
   }
 
@@ -94,9 +94,9 @@ class ScheduledOrders extends ExecutorModuleInterface {
       [order.order.buyToken, order.order.sellToken, order.order.amount],
     );
     final calldata = _deployedModule.contract.function('addOrder').encodeCall([
-      intToBytes(order.schedule.repeatEvery).padToNBytes(6),
-      intToBytes(order.schedule.numberOfRepeats).padToNBytes(2),
-      intToBytes(dateTimeToInt(order.schedule.startDate)).padToNBytes(6),
+      order.schedule.repeatEvery.toBytes(6),
+      order.schedule.numberOfRepeats.toBytes(2),
+      dateTimeToInt(order.schedule.startDate).toBytes(6),
       swapOrderData,
     ]);
     final tx = await contract.sendTransaction(address, calldata);

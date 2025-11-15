@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:variance_dart/variance_dart.dart';
 import 'package:eip7579/src/7579/errors.dart';
 import 'package:eip7579/src/7579/utils.dart';
+import 'package:eip7579/src/7579/extensions.dart';
 import 'package:web3_signers/web3_signers.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -18,6 +19,7 @@ import 'src/7579/modules/hooks/HookMultiPlexer/hook_multi_plexer.m.dart';
 import 'src/7579/modules/validators/OwnableValidator/ownable_validator.m.dart';
 import 'src/7579/modules/validators/SocialRecovery/social_recovery.m.dart';
 import 'src/7579/modules/validators/WebauthnValidator/webauthn.m.dart';
+import 'src/7579/modules/validators/MultiFactor/multi_factor.m.dart';
 
 export 'src/7579/StandardModuleInterface/interface.dart';
 
@@ -33,5 +35,6 @@ part 'src/7579/modules/hooks/HookMultiPlexer/hook_multi_plexer.dart';
 part 'src/7579/modules/validators/OwnableValidator/ownable_validator.dart';
 part 'src/7579/modules/validators/SocialRecovery/social_recovery.dart';
 part 'src/7579/modules/validators/WebauthnValidator/webauthn.dart';
+part 'src/7579/modules/validators/MultiFactor/multi_factor.dart';
 // ------------ WALLET EXTENSIONS -------------- //
 part 'src/7579/modules/validators/WebauthnValidator/_wallet.ext.dart';
