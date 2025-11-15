@@ -4,6 +4,13 @@
 * Move extensions to separate file and update utils
 * Add test coverage for modules and interfaces
 
+## [1.4.0](https://github.com/vaariance/eip-7579/compare/v1.3.0...v1.4.0) (2025-11-15)
+
+
+### Features
+
+* add MultiFactor validator module and test suite ([d8368bf](https://github.com/vaariance/eip-7579/commit/d8368bff70a03e40f4a986e33eae29153609e90c))
+
 ## 1.3.0
 
 * Fix return type annotations in DoubleExt extension methods
